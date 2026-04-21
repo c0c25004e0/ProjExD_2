@@ -1,6 +1,7 @@
 import os
 import sys
 import random
+import time
 import pygame as pg
 
 
@@ -51,7 +52,7 @@ def main():
         screen.blit(bg_img, [0, 0]) 
         
         if kk_rct.colliderect(bb_rct):  # こうかとんと爆弾の衝突判定
-            print("ゲームオーバー")
+            gameover(screen)
             return  # ゲームオーバーの意味でmain関数から出る
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
@@ -83,6 +84,40 @@ def main():
         pg.display.update()
         tmr += 1
         clock.tick(50)
+
+
+def gameover(screen: pg.Surface) -> None:
+    bk = pg.Surface((WIDTH, HEIGHT))  #黒いsurfaceをつくる
+    bk.fill((0 , 0 , 0))
+
+    bk.set_alpha(200)  #透明度
+
+    font = pg.font.Font(None, 80)  #フォント
+    moji = font.render("Game Over", True, (255, 255, 255))
+    moji_rct = moji.get_rect(center = (WIDTH//2, HEIGHT//2 - 50))
+    kk_img = pg.image.load("fig/8.png")
+    kk_img = pg.transform.rotozoom(kk_img, 0, 0.9)
+    kk_rct_left = kk_img.get_rect()
+    kk_rct_left.centery = moji_rct.centery
+    kk_rct_left.right = moji_rct.left - 20 
+
+    kk_img_flip = pg.transform.flip(kk_img, True, False)
+    kk_rct_right = kk_img_flip.get_rect()
+    kk_rct_right.centery = moji_rct.centery
+    kk_rct_right.left = moji_rct.right + 20
+
+
+    bk.blit(moji, moji_rct)
+    bk.blit(kk_img, kk_rct_left)
+    bk.blit(kk_img_flip, kk_rct_right)
+    screen.blit(bk, (0, 0))
+
+    pg.display.update()
+    time.sleep(5)
+
+
+
+    
 
 
 if __name__ == "__main__":
